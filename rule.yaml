@@ -1,0 +1,30 @@
+#define rules about how each kind of file will be organized
+
+db: pool.cache.sqlite3.db
+
+doc: 
+  ext: .pdf .txt .doc .xsl .xslx
+  rename: 
+  - $FN_YEAR.$FN_MONTH.$FN_DAY-$MD5_6-$ORIGINAL_NAME.$ext
+  - $ST_MTIME_YEAR.$ST_MTIME_MONTH.$ST_MTIME_DAY-$ORIGINAL_NAME.$ext 
+  goto: 
+  - pool_docs/$ST_MTIME_YEAR/$ST_MTIME_MONTH/
+
+img: 
+  ext: .jpg .png .heic
+  rename: $EXIF_YEAR.$EXIF_MONTH.$EXIF_DAY-$MD5_6.$ext
+  goto: 
+  - pool_images/$EXIF_YEAR/$EXIF_MONTH
+  - pool_images/$ST_MTIME_YEAR/$ST_MTIME_MONTH/
+
+video: 
+  ext: .mov .mp4
+  rename: $ST_MTIME_YEAR.$ST_MTIME_MONTH.$ST_MTIME_DAY-$MD5_6.$ext
+  goto: 
+  - pool_videos/$ST_MTIME_YEAR/$ST_MTIME_MONTH/
+
+audio: 
+  ext: .mp3
+  rename: $MP3_ALBUM - $MP3_TITLE.$ext
+  goto: 
+  - pool_audios/$MP3_YEAR/$MP3_ALBUM/
