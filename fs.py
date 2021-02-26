@@ -47,7 +47,7 @@ def cli(args):
         fp.close()
 
 
-    if args.report_new_quick:
+    if args.diff_new:
         assert args.src_directory
         assert args.dest_directory
         fs = FileScan()
@@ -81,7 +81,7 @@ def main():
     parser.add_argument('-sd', '--src_directory', help='source directory')
     parser.add_argument('-dd', '--dest_directory', help='dest directory')
     parser.add_argument('-r', '--report', action='store_true', help='report source directory')
-    parser.add_argument('-rnq', '--report_new_quick', action='store_true', help='report files that in source but not in dest ')
+    parser.add_argument('-dn', '--diff_new', action='store_true', help='report files that in source but not in dest ')
     parser.add_argument('-efl', '--export_file_list', help='report source directory')
     parser.set_defaults(func=cli)
 
