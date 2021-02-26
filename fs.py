@@ -14,7 +14,7 @@ from FileScan import *
 def cli(args):
     if args.report:
         fs = FileScan()
-        all_files, file_types = fs.scan(args.src_directory)
+        all_files, file_types, all_fns = fs.scan(args.src_directory)
         tys = list(file_types.keys())
         tys.sort(key=lambda x:file_types[x][1], reverse=True)
 
@@ -37,7 +37,7 @@ def cli(args):
 
     if args.export_file_list:
         fs = FileScan()
-        all_files, file_types = fs.scan(args.src_directory)
+        all_files, file_types, all_fns = fs.scan(args.src_directory)
         fp = open(args.export_file_list, "w")
         for ty, ft in file_types.items():
             fp.write("%s File Type: %s %s\n" %("="*30, ty, "="*30))
@@ -45,6 +45,32 @@ def cli(args):
                 fp.write("%s\n"%fn);
             fp.write("\n")
         fp.close()
+
+
+    if args.report_new_quick:
+        assert args.src_directory
+        assert args.dest_directory
+        fs = FileScan()
+        all_files_src, file_types_src, all_fns_src = fs.scan(args.src_directory)
+        all_files_dest, file_types_dest, all_fns_dst = fs.scan(args.dest_directory)
+
+        new_fns = []
+        for fn, flist in all_fns_src.items():
+            if fn in all_fns_dst:
+                for x in flist:
+                    f_src = all_files_src[x]
+                    found = False
+                    for y in all_fns_dst[fn]:
+                        f_dst = all_files_dest[y]
+                        if f_dst[2].st_size == f_src[2].st_size:
+                            found = True
+                    if not found:
+                        new_fns.append(x)
+            else:
+                new_fns.extend(flist)
+
+        for fn in new_fns:
+            print(fn)
     return
 
 def main():
@@ -52,8 +78,10 @@ def main():
     parser: argparse.ArgumentParser = argparse.ArgumentParser(prog=os.path.basename(__file__)
     , description="FileSync: File Sync")
     parser.add_argument('-d', '--debug', action='store_true', help="debug mode")
-    parser.add_argument('-s', '--src_directory', help='source directory')
+    parser.add_argument('-sd', '--src_directory', help='source directory')
+    parser.add_argument('-dd', '--dest_directory', help='dest directory')
     parser.add_argument('-r', '--report', action='store_true', help='report source directory')
+    parser.add_argument('-rnq', '--report_new_quick', action='store_true', help='report files that in source but not in dest ')
     parser.add_argument('-efl', '--export_file_list', help='report source directory')
     parser.set_defaults(func=cli)
 
