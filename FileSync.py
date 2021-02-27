@@ -11,6 +11,7 @@ import yaml
 import hashlib
 import datetime
 import shutil
+import progressbar
 from texttable import Texttable
 from FileScan import *
 from DBConfig import *
@@ -284,8 +285,17 @@ class FileSync:
 
     def sync_files(self, sync_queue):
         logging.info("%d files need to be synced", len(sync_queue))
+        widgets = [progressbar.Percentage(), progressbar.Bar()]
+        widgets = ['Syncing progress: ', progressbar.Counter('%%(value)5d of %d '%len(sync_queue)),
+                               ' files (', progressbar.Timer(), ')']
+
+        bar = progressbar.ProgressBar(widgets=widgets, max_value=len(sync_queue)).start()
+
+        count = 0
         for fn in sync_queue:
             self.sync_one_file(fn)
+            count = count + 1
+            bar.update(count)
         return
 
     def load_database_to_mem(self):
@@ -307,7 +317,7 @@ class FileSync:
                 continue
             self.sync_queue.append(fn)
 
-        self.load_database_to_mem()
+        #self.load_database_to_mem()
         self.sync_files(self.sync_queue)
 
         self.mydb.Close()
