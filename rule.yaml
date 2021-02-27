@@ -6,10 +6,10 @@ doc:
   ext: [".pdf", ".txt", ".doc", ".xsl", ".xslx"]
   rename: 
   - $FN_YEAR.$FN_MONTH.$FN_DAY-$MD5_6-$FN_ORIGNAME.$ext
-  - $ST_MTIME_YEAR.$ST_MTIME_MONTH.$ST_MTIME_DAY-$FN_ORIGNAME.$ext 
+  - $ST_MTIME_YEAR.$ST_MTIME_MONTH.$ST_MTIME_DAY-$MD5_6-$FN_ORIGNAME.$ext 
   goto: 
-  - pool_docs/$FN_YEAR/$FN_MONTH/
-  - pool_docs/$ST_MTIME_YEAR/$ST_MTIME_MONTH/
+  - pool_docs/$FN_YEAR/
+  - pool_docs/$ST_MTIME_YEAR/
 
 img: 
   ext: [".jpg", ".png", ".heic"]

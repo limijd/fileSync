@@ -10,6 +10,7 @@ import logging
 import yaml
 import hashlib
 import datetime
+import shutil
 from texttable import Texttable
 from FileScan import *
 from DBConfig import *
@@ -114,6 +115,7 @@ class FileSync:
 
         fn = fnpath.split("/")[-1]
         fn_noext, ext = os.path.splitext(fn)
+        fn_vars["FN_ORIGNAME"] = fn_noext
 
         res = re.search(r"20[0-9][0-9]-[0-9]{1,2}-[0-3][0-9]", fn, re.UNICODE)
         if res:
@@ -247,6 +249,36 @@ class FileSync:
 
         fn_vars = self.parse_fn(fnpath, md5)
         target_dir, newfn = self.get_newfn(fnpath, fn_vars, ext_rule["rename"], ext_rule["goto"])
+
+        if not os.path.exists(target_dir):
+            logging.info("making dir: %s", target_dir)
+            os.makedirs(target_dir)
+
+        copy_successful = False
+        try:
+            shutil.copy2(fnpath, "%s/%s"%(target_dir, newfn))
+            copy_successful = True
+        except Exception as e:
+            print(e)
+            copy_successful = False
+            logging.error("Error while copying file: %s -> %s/%s", fnpath, target_dir, newfn)
+
+        if copy_successful:
+            try:
+                self.mydb.Insert("TblFile", 
+                        [finfo[2].st_size, finfo[2].st_atime
+                        , finfo[2].st_mtime
+                        , finfo[2].st_ctime
+                        , os.path.abspath(fnpath)
+                        , md5
+                        , newfn
+                        , ext]
+                    , disconn=True, commit=True)
+                logging.debug("register %s to database", fnpath)
+            except Exception as e:
+                print(e)
+                self.mydb.Close(rollback=False)
+                sys.exit(7)
 
         return
 
