@@ -33,7 +33,7 @@ class FileScan:
                     file_types[ty] = [count+1, sz_count, files]
                 else:
                     file_types[ty] = [1, stat.st_size, [entry.path] ]
-                all_files[entry.path] = [entry.name, entry.path, entry.stat(), entry.is_symlink()]
+                all_files[entry.path] = [entry.name, entry.path, entry.stat(), entry.is_symlink(), None]
                 if entry.name in all_fns:
                     all_fns[entry.name].append(entry.path)
                 else:
