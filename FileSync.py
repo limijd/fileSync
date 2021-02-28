@@ -157,7 +157,7 @@ class FileSync:
         fn_vars["ST_MTIME_MONTH"] = dts[1]
         fn_vars["ST_MTIME_DAY"] = dts[2]
         fn_vars["ext"] = ext.strip(".")
-        fn_vars["MD5_6"] = md5[0:6]
+        fn_vars["MD5_5"] = md5[0:5]
 
         if exif and "EXIF DateTimeOriginal" in exif:
             dt = exif["EXIF DateTimeOriginal"].values
@@ -182,7 +182,7 @@ class FileSync:
         VARS = ["FN_YEAR", "FN_MONTH", "FN_DAY", "ST_MTIME_YEAR", "ST_MTIME_MONTH",
                 "ST_MTIME_DAY", "EXIF_YEAR", "EXIF_MONTH", "EXIF_DAY", "MP3_TITLE",
                 "EXIF_HOUR", "EXIF_MIN", "EXIF_SEC",
-                "MP3_ALBUM", "FN_ORIGNAME", "ext", "MD5_6"]
+                "MP3_ALBUM", "FN_ORIGNAME", "ext", "MD5_5"]
 
         #rename 
         match_rule = None
