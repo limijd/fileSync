@@ -342,6 +342,7 @@ class FileSync:
         self.mydb.CheckTables()
 
         fs = FileScan()
+        logging.info("Scanning directory: %s ....", self.args.src_directory)
         self.all_files_src, self.file_types_src, self.all_fns_src = fs.scan(self.args.src_directory)
         self.sync_queue = []
         for fn, finfo in self.all_files_src.items():
