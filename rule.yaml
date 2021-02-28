@@ -23,7 +23,7 @@ img:
 video: 
   ext: [".mov", ".mp4"]
   rename: 
-  - $ST_MTIME_YEAR.$ST_MTIME_MONTH.$ST_MTIME_DAY-$MD5_6-$FN_ORIGNAME.$ext 
+  - $ST_MTIME_YEAR.$ST_MTIME_MONTH.$ST_MTIME_DAY-$MD5_6.$ext 
   goto: 
   - pool_videos/$ST_MTIME_YEAR/$ST_MTIME_MONTH/
 
