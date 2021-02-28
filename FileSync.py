@@ -157,7 +157,17 @@ class FileSync:
         fn_vars["ST_MTIME_MONTH"] = dts[1]
         fn_vars["ST_MTIME_DAY"] = dts[2]
         fn_vars["ext"] = ext.strip(".")
-        fn_vars["MD5_5"] = md5[0:5]
+        if md5:
+            fn_vars["MD5_5"] = md5[0:5]
+            if fn_vars["FN_ORIGNAME"].find(fn_vars["MD5_5"])>0:
+                orig_name = re.sub(fn_vars["MD5_5"], "", fn_vars["FN_ORIGNAME"], re.UNICODE)
+                fn_vars["FN_ORIGNAME"] = orig_name
+
+        orig_name = fn_vars["FN_ORIGNAME"]
+        orig_name = orig_name.strip("-")
+        orig_name = orig_name.strip("_")
+        orig_name = re.sub("--", "-", orig_name, re.UNICODE)
+        fn_vars["FN_ORIGNAME"] = orig_name
 
         if exif and "EXIF DateTimeOriginal" in exif:
             dt = exif["EXIF DateTimeOriginal"].values
@@ -174,6 +184,7 @@ class FileSync:
                 fn_vars["EXIF_HOUR"] = h
                 fn_vars["EXIF_MIN"] = mn
                 fn_vars["EXIF_SEC"] = s
+
 
         return fn_vars
 
