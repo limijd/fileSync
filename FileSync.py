@@ -159,7 +159,7 @@ class FileSync:
         fn_vars["ext"] = ext.strip(".")
         fn_vars["MD5_6"] = md5[0:6]
 
-        if exif:
+        if exif and "EXIF DateTimeOriginal" in exif:
             dt = exif["EXIF DateTimeOriginal"].values
 
             if dt:
