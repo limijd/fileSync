@@ -12,6 +12,7 @@ import hashlib
 import datetime
 import shutil
 import progressbar
+import exifread
 from texttable import Texttable
 from FileScan import *
 from DBConfig import *
@@ -110,12 +111,13 @@ class FileSync:
         logging.info("Database: %s", self.dbpath)
         return
 
-    def parse_fn(self, fnpath, md5=None):
+    def parse_fn(self, fnpath, md5=None, exif=None):
         logging.debug("Parsing %s ...", fnpath)
         fn_vars = {}
 
         fn = fnpath.split("/")[-1]
         fn_noext, ext = os.path.splitext(fn)
+        ext = ext.lower()
         fn_vars["FN_ORIGNAME"] = fn_noext
 
         res = re.search(r"20[0-9][0-9]-[0-9]{1,2}-[0-3][0-9]", fn, re.UNICODE)
@@ -157,12 +159,29 @@ class FileSync:
         fn_vars["ext"] = ext.strip(".")
         fn_vars["MD5_6"] = md5[0:6]
 
+        if exif:
+            dt = exif["EXIF DateTimeOriginal"].values
+
+            if dt:
+                dt = dt.strip()
+                year = dt.split(":")[0].strip()
+                month = dt.split(":")[1].strip()
+                dt = dt.replace(" ", ":")
+                y,m,d,h,mn,s = dt.split(":")
+                fn_vars["EXIF_YEAR"] = y
+                fn_vars["EXIF_MONTH"] = m
+                fn_vars["EXIF_DAY"] = d
+                fn_vars["EXIF_HOUR"] = h
+                fn_vars["EXIF_MIN"] = mn
+                fn_vars["EXIF_SEC"] = s
+
         return fn_vars
 
     def get_newfn(self, fnpath, fn_vars, rename_rules, goto_rules):
         fn = fnpath.split("/")[-1]
         VARS = ["FN_YEAR", "FN_MONTH", "FN_DAY", "ST_MTIME_YEAR", "ST_MTIME_MONTH",
                 "ST_MTIME_DAY", "EXIF_YEAR", "EXIF_MONTH", "EXIF_DAY", "MP3_TITLE",
+                "EXIF_HOUR", "EXIF_MIN", "EXIF_SEC",
                 "MP3_ALBUM", "FN_ORIGNAME", "ext", "MD5_6"]
 
         #rename 
@@ -216,9 +235,26 @@ class FileSync:
         logging.info("%s -> %s/%s", fn, target_dir, newfn)
         return target_dir, newfn
 
+    def read_exif(self, fnpath, fp):
+        logging.info("reading exif: %s", fnpath)
+        try:
+            exif = exifread.process_file(fp)
+        except Exception as e:
+            print("Exif Read Error: " , e)
+            exif = None
+        return exif
 
     def sync_one_file(self, fnpath):
+        ext = os.path.splitext(fnpath)[1].lower()
+        ext_rule = self.ext_rules[ext]
+
         fp = open(fnpath, "rb")
+
+        if ext in [".jpg", ".png", ".heic"]:
+            exif = self.read_exif(fnpath, fp)
+        else:
+            exif = None
+
         fp.seek(0,0) #to beginning
         content = fp.read()
         fp.close()
@@ -245,10 +281,7 @@ class FileSync:
             logging.debug("%s exists in database already. skipped sync.")
             return
 
-        ext = os.path.splitext(fnpath)[1]
-        ext_rule = self.ext_rules[ext]
-
-        fn_vars = self.parse_fn(fnpath, md5)
+        fn_vars = self.parse_fn(fnpath, md5, exif)
         target_dir, newfn = self.get_newfn(fnpath, fn_vars, ext_rule["rename"], ext_rule["goto"])
 
         if not os.path.exists(target_dir):
@@ -312,7 +345,7 @@ class FileSync:
         self.all_files_src, self.file_types_src, self.all_fns_src = fs.scan(self.args.src_directory)
         self.sync_queue = []
         for fn, finfo in self.all_files_src.items():
-            ty = os.path.splitext(fn)[1]
+            ty = os.path.splitext(fn)[1].lower()
             if not ty in self.ext_rules:
                 continue
             self.sync_queue.append(fn)

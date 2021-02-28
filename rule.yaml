@@ -14,7 +14,8 @@ doc:
 img: 
   ext: [".jpg", ".png", ".heic"]
   rename: 
-  - $EXIF_YEAR.$EXIF_MONTH.$EXIF_DAY-$MD5_6.$ext
+  - $EXIF_YEAR.$EXIF_MONTH.$EXIF_DAY-$EXIF_HOUR.$EXIF_MIN.$EXIF_SEC-$MD5_6.$ext
+  - $ST_MTIME_YEAR.$ST_MTIME_MONTH.$ST_MTIME_DAY-$MD5_6-$FN_ORIGNAME.$ext 
   goto: 
   - pool_images/$EXIF_YEAR/$EXIF_MONTH
   - pool_images/$ST_MTIME_YEAR/$ST_MTIME_MONTH/
@@ -22,7 +23,7 @@ img:
 video: 
   ext: [".mov", ".mp4"]
   rename: 
-  - $ST_MTIME_YEAR.$ST_MTIME_MONTH.$ST_MTIME_DAY-$MD5_6.$ext
+  - $ST_MTIME_YEAR.$ST_MTIME_MONTH.$ST_MTIME_DAY-$MD5_6-$FN_ORIGNAME.$ext 
   goto: 
   - pool_videos/$ST_MTIME_YEAR/$ST_MTIME_MONTH/
 
