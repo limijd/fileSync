@@ -159,7 +159,7 @@ class FileSync:
         fn_vars["ext"] = ext.strip(".")
         if md5:
             fn_vars["MD5_5"] = md5[0:5]
-            if fn_vars["FN_ORIGNAME"].find(fn_vars["MD5_5"])>0:
+            if fn_vars["FN_ORIGNAME"].find(fn_vars["MD5_5"])>=0:
                 orig_name = re.sub(fn_vars["MD5_5"], "", fn_vars["FN_ORIGNAME"], re.UNICODE)
                 fn_vars["FN_ORIGNAME"] = orig_name
 
@@ -217,6 +217,10 @@ class FileSync:
                     newfn = re.sub(s_from, s_to, newfn, re.UNICODE)
         else:
             newfn = fn
+
+        re_from = "-\.%s$"%(fn_vars["ext"])
+        re_to = ".%s"%(fn_vars["ext"])
+        newfn = re.sub(re_from, re_to, newfn, re.UNICODE)
 
         #go to directory
         match_rule = None
@@ -355,6 +359,7 @@ class FileSync:
         fs = FileScan()
         logging.info("Scanning directory: %s ....", self.args.src_directory)
         self.all_files_src, self.file_types_src, self.all_fns_src = fs.scan(self.args.src_directory)
+        logging.info("total %d files scanned.", len(self.all_files_src))
         self.sync_queue = []
         for fn, finfo in self.all_files_src.items():
             ty = os.path.splitext(fn)[1].lower()

@@ -15,11 +15,11 @@ class FileScan:
 
     def scan(self, directory, all_files=None, file_types=None, all_fns=None):
         logging.debug("Scan %s ...", directory)
-        if not all_files:
+        if all_files == None:
             all_files = {}
-        if not file_types:
+        if file_types == None:
             file_types = {}
-        if not all_fns:
+        if all_fns == None:
             all_fns = {}
 
         for entry in os.scandir(directory):
