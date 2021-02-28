@@ -232,11 +232,11 @@ class FileSync:
                 
         target_dir = self.args.dest_directory + "/" + target_dir
         target_dir = os.path.abspath(target_dir)
-        logging.info("%s -> %s/%s", fn, target_dir, newfn)
+        logging.debug("%s -> %s/%s", fn, target_dir, newfn)
         return target_dir, newfn
 
     def read_exif(self, fnpath, fp):
-        logging.info("reading exif: %s", fnpath)
+        logging.debug("reading exif: %s", fnpath)
         try:
             exif = exifread.process_file(fp)
         except Exception as e:
@@ -285,7 +285,7 @@ class FileSync:
         target_dir, newfn = self.get_newfn(fnpath, fn_vars, ext_rule["rename"], ext_rule["goto"])
 
         if not os.path.exists(target_dir):
-            logging.info("making dir: %s", target_dir)
+            logging.debug("making dir: %s", target_dir)
             os.makedirs(target_dir)
 
         copy_successful = False
