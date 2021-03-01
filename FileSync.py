@@ -340,7 +340,7 @@ class FileSync:
         count_skipped = 0
         for fn in sync_queue:
             skipped = self.sync_one_file(fn)
-            count_skipped = count_skipped + 1
+            count_skipped = count_skipped + skipped
             count = count + 1
             now = datetime.datetime.now()
             delta = now - START_DT
