@@ -28,7 +28,7 @@ class FileSync:
 
     def do_report(self):
         fs = FileScan()
-        all_files, file_types, all_fns = fs.scan(args.src_directory)
+        all_files, file_types, all_fns = fs.scan(self.args.src_directory)
         tys = list(file_types.keys())
         tys.sort(key=lambda x:file_types[x][1], reverse=True)
 
