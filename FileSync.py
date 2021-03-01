@@ -19,6 +19,8 @@ from DBConfig import *
 
 SCRIPT_PATH=os.path.dirname(os.path.realpath(__file__))
 
+START_DT = datetime.datetime.now()
+
 class FileSync:
     def __init__(self, args):
         self.args = args
@@ -294,7 +296,7 @@ class FileSync:
 
         if exist:
             logging.debug("%s exists in database already. skipped sync.")
-            return
+            return 1
 
         fn_vars = self.parse_fn(fnpath, md5, exif)
         target_dir, newfn = self.get_newfn(fnpath, fn_vars, ext_rule["rename"], ext_rule["goto"])
@@ -329,21 +331,23 @@ class FileSync:
                 self.mydb.Close(rollback=False)
                 sys.exit(7)
 
-        return
+        return 0
 
     def sync_files(self, sync_queue):
         logging.info("%d files need to be synced", len(sync_queue))
-        widgets = [progressbar.Percentage(), progressbar.Bar()]
-        widgets = ['Syncing progress: ', progressbar.Counter('%%(value)5d of %d '%len(sync_queue)),
-                               ' files (', progressbar.Timer(), ')']
-
-        bar = progressbar.ProgressBar(widgets=widgets, max_value=len(sync_queue)).start()
 
         count = 0
+        count_skipped = 0
         for fn in sync_queue:
-            self.sync_one_file(fn)
+            skipped = self.sync_one_file(fn)
+            count_skipped = count_skipped + 1
             count = count + 1
-            bar.update(count)
+            now = datetime.datetime.now()
+            delta = now - START_DT
+            print("Syncing progress: %5d processed %5d skipped / total %5d . Elapsed time: %s\r" % (count, count_skipped, len(sync_queue), str(delta)), end="")
+
+        print("")
+        logging.info("total %d files already exist and skipped.", count_skipped)
         return
 
     def load_database_to_mem(self):

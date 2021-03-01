@@ -49,10 +49,10 @@ def main():
         parser.error("too few arguments")
 
     if args.debug:
-        logging.basicConfig(format='[alc: %(asctime)s %(levelname)s] %(message)s',
+        logging.basicConfig(format='[FileSync: %(asctime)s %(levelname)s] %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG)
     else:
-        logging.basicConfig(format='[alc: %(asctime)s %(levelname)s] %(message)s',
+        logging.basicConfig(format='[FileSync: %(asctime)s %(levelname)s] %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
 
     args.func(args)
