@@ -299,7 +299,7 @@ class FileSync:
             self.mydb.Close(rollback=False)
             sys.exit(6)
 
-        if self.args.report_dup and exist:
+        if self.args.report_dup: 
             if md5 in self.md5_dups:
                 self.md5_dups[md5].append(fnpath)
             else:
