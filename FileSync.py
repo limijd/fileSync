@@ -24,6 +24,8 @@ START_DT = datetime.datetime.now()
 class FileSync:
     def __init__(self, args):
         self.args = args
+
+        self.md5_dups = {}
         pass
 
     def do_report(self):
@@ -294,6 +296,12 @@ class FileSync:
             self.mydb.Close(rollback=False)
             sys.exit(6)
 
+        if self.args.report_dup and exist:
+            if md5 in self.md5_dups:
+                self.md5_dups[md5].append(fnpath)
+            else:
+                self.md5_dups[md5] = [fnpath] 
+
         if exist:
             logging.debug("%s exists in database already. skipped sync.")
             return 1
@@ -373,6 +381,18 @@ class FileSync:
 
         #self.load_database_to_mem()
         self.sync_files(self.sync_queue)
+
+        if self.args.report_dup:
+            logging.info("Reporting duplicated files in: dup.report.txt")
+            fp = open("dup.report.txt", "w")
+            dups = list(filter(lambda x: len(self.md5_dups[x])>1, list(self.md5_dups.keys())))
+            dups.sort(reverse=True)
+            for md5 in dups:
+                fp.write("MD5: %s\n"%md5)
+                for fn in self.md5_dups[md5]:
+                    fp.write("%s\n"%fn) 
+                fp.write("\n")
+            fp.close()
 
         self.mydb.Close()
         return

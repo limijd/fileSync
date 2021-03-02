@@ -39,6 +39,7 @@ def main():
     parser.add_argument('-r', '--report', action='store_true', help='report source directory')
     parser.add_argument('-dn', '--diff_new', action='store_true', help='report files that in source but not in dest ')
     parser.add_argument('-sn', '--sync_new', action='store_true', help='sync files that in source but not in dest ')
+    parser.add_argument('-rd', '--report_dup', action='store_true', help='report duplicated files in source directory')
     parser.add_argument('-efl', '--export_file_list', help='report source directory')
     parser.set_defaults(func=cli)
 
