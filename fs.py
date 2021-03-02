@@ -56,7 +56,7 @@ def main():
         logging.basicConfig(format='[FileSync: %(asctime)s %(levelname)s] %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S', level=logging.INFO)
 
-    logging.getLogger("imported_module").setLevel(logging.ERROR)
+    logging.getLogger("exifread").setLevel(logging.ERROR)
 
     args.func(args)
 
