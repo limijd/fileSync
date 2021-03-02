@@ -156,10 +156,13 @@ class FileSync:
         ct = stat.st_ctime
         dt = min(mt, ct)
         dt = datetime.datetime.fromtimestamp(dt)
-        dts = dt.strftime("%Y.%m.%d").split(".")
+        dts = dt.strftime("%Y.%m.%d.%H.%M.%S").split(".")
         fn_vars["ST_MTIME_YEAR"] = dts[0]
         fn_vars["ST_MTIME_MONTH"] = dts[1]
         fn_vars["ST_MTIME_DAY"] = dts[2]
+        fn_vars["ST_MTIME_HOUR"] = dts[3]
+        fn_vars["ST_MTIME_MIN"] = dts[4]
+        fn_vars["ST_MTIME_SEC"] = dts[5]
         fn_vars["ext"] = ext.strip(".")
         if md5:
             fn_vars["MD5_5"] = md5[0:5]
@@ -194,7 +197,7 @@ class FileSync:
 
     def get_newfn(self, fnpath, fn_vars, rename_rules, goto_rules):
         fn = fnpath.split("/")[-1]
-        VARS = ["FN_YEAR", "FN_MONTH", "FN_DAY", "ST_MTIME_YEAR", "ST_MTIME_MONTH",
+        VARS = ["FN_YEAR", "FN_MONTH", "FN_DAY", "ST_MTIME_YEAR", "ST_MTIME_MONTH", "ST_MTIME_HOUR", "ST_MTIME_MIN", "ST_MTIME_SEC",
                 "ST_MTIME_DAY", "EXIF_YEAR", "EXIF_MONTH", "EXIF_DAY", "MP3_TITLE",
                 "EXIF_HOUR", "EXIF_MIN", "EXIF_SEC",
                 "MP3_ALBUM", "FN_ORIGNAME", "ext", "MD5_5"]
