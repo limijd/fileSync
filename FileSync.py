@@ -284,26 +284,31 @@ class FileSync:
         finfo = self.all_files_src[fnpath]
         finfo[4] = md5
 
+        exist = 0
+        if md5 in self.md5_dups:
+            self.md5_dups[md5].append(fnpath)
+            exist = 1
+        else:
+            self.md5_dups[md5] = [fnpath] 
+
+        if exist:
+            logging.debug("%s exists in database already. skipped sync.")
+            return 1
+
         #check if file exists in DB
         try:
             exist = self.mydb.Search("TblFile",
                 {
                     "st_size":finfo[2].st_size,
-                    "st_mtime":finfo[2].st_mtime,
-                    "st_ctime":finfo[2].st_ctime,
-                    "from_abs_path":os.path.abspath(fnpath),
-                    "md5":md5,
+                    #"st_mtime":finfo[2].st_mtime,
+                    #"st_ctime":finfo[2].st_ctime,
+                    #"from_abs_path":os.path.abspath(fnpath),
+                    "md5":md5
                 }, disconn=False)
         except Exception as e:
             print(e)
             self.mydb.Close(rollback=False)
             sys.exit(6)
-
-        if self.args.report_dup: 
-            if md5 in self.md5_dups:
-                self.md5_dups[md5].append(fnpath)
-            else:
-                self.md5_dups[md5] = [fnpath] 
 
         if exist:
             logging.debug("%s exists in database already. skipped sync.")
