@@ -3,7 +3,7 @@
 db: pool.cache.sqlite3.db
 
 doc: 
-  ext: [".pdf", ".txt", ".doc", ".xsl", ".xslx"]
+  ext: [".pdf", ".txt", ".doc", ".xsl", ".xslx", ".ppt", ".pptx"]
   rename: 
   - $FN_YEAR.$FN_MONTH.$FN_DAY-$MD5_5-$FN_ORIGNAME.$ext
   - $ST_MTIME_YEAR.$ST_MTIME_MONTH.$ST_MTIME_DAY-$MD5_5-$FN_ORIGNAME.$ext 

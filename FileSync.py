@@ -241,7 +241,9 @@ class FileSync:
             if match_rule:
                 break
 
-        assert match_rule and "Cant identify target directory!"
+        if not match_rule:
+            logging.error("No match rule: %s", fnpath)
+            assert match_rule and "Cant identify target directory!"
 
         if match_rule:
             target_dir = match_rule
