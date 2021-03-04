@@ -26,6 +26,7 @@ class FileSync:
         self.args = args
 
         self.md5_dups = {}
+        self.copied_files = {}
         pass
 
     def do_report(self):
@@ -333,6 +334,7 @@ class FileSync:
             logging.error("Error while copying file: %s -> %s/%s", fnpath, target_dir, newfn)
 
         if copy_successful:
+            self.copied_files[fnpath] = "%s/%s"%(target_dir, newfn)
             try:
                 self.mydb.Insert("TblFile", 
                         [finfo[2].st_size, finfo[2].st_atime
@@ -392,6 +394,8 @@ class FileSync:
         #self.load_database_to_mem()
         self.sync_files(self.sync_queue)
 
+        self.mydb.Close()
+
         if self.args.report_dup:
             logging.info("Reporting duplicated files in: dup.report.txt")
             fp = open("dup.report.txt", "w")
@@ -404,6 +408,12 @@ class FileSync:
                 fp.write("\n")
             fp.close()
 
-        self.mydb.Close()
+        if self.args.report_copied_files:
+            logging.info("Reporting copied files in: copied.report.txt")
+            fp = open("copied.report.txt", "w")
+            for fn_from, fn_to in self.copied_files.items():
+                fp.write("%s -> %s\n"%(fn_from, fn_to))
+            fp.close()
+
         return
 
