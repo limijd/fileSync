@@ -2,6 +2,15 @@
 
 db: pool.cache.sqlite3.db
 
+backup:
+  ext: [".gz", ".7z", ".rar", ".zip"]
+  rename:
+  - $FN_YEAR.$FN_MONTH.$FN_DAY-$MD5_5-$FN_ORIGNAME.$ext
+  - $ST_MTIME_YEAR.$ST_MTIME_MONTH.$ST_MTIME_DAY-$MD5_5-$FN_ORIGNAME.$ext
+  goto:
+  - pool_zips/$FN_YEAR/
+  - pool_zips/$ST_MTIME_YEAR/
+
 doc: 
   ext: [".pdf", ".txt", ".doc", ".xsl", ".xslx", ".ppt", ".pptx"]
   rename: 
