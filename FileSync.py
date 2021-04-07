@@ -55,8 +55,8 @@ class FileSync:
 
     def do_export_file_list(self):
         fs = FileScan()
-        all_files, file_types, all_fns = fs.scan(args.src_directory)
-        fp = open(args.export_file_list, "w")
+        all_files, file_types, all_fns = fs.scan(self.args.src_directory)
+        fp = open(self.args.export_file_list, "w")
         for ty, ft in file_types.items():
             fp.write("%s File Type: %s %s\n" %("="*30, ty, "="*30))
             for fn in ft[2]:
@@ -66,11 +66,11 @@ class FileSync:
         return
 
     def do_diff_new(self):
-        assert args.src_directory
-        assert args.dest_directory
+        assert self.args.src_directory
+        assert self.args.dest_directory
         fs = FileScan()
-        all_files_src, file_types_src, all_fns_src = fs.scan(args.src_directory)
-        all_files_dest, file_types_dest, all_fns_dst = fs.scan(args.dest_directory)
+        all_files_src, file_types_src, all_fns_src = fs.scan(self.args.src_directory)
+        all_files_dest, file_types_dest, all_fns_dst = fs.scan(self.args.dest_directory)
 
         new_fns = []
         for fn, flist in all_fns_src.items():
