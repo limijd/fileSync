@@ -340,9 +340,9 @@ class FileSync:
                         [finfo[2].st_size, finfo[2].st_atime
                         , finfo[2].st_mtime
                         , finfo[2].st_ctime
-                        , os.path.abspath(fnpath)
+                        , os.path.abspath(fnpath.replace("'","''"))
                         , md5
-                        , newfn
+                        , newfn.replace("'", "''")
                         , ext]
                     , disconn=True, commit=True)
                 logging.debug("register %s to database", fnpath)
