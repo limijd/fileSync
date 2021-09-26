@@ -40,5 +40,7 @@ audio:
   ext: [".mp3"]
   rename: 
   - $MP3_ALBUM - $MP3_TITLE.$ext
+  - $ST_MTIME_YEAR.$ST_MTIME_MONTH.$ST_MTIME_DAY-$MD5_5-$FN_ORIGNAME.$ext 
   goto: 
   - pool_audios/$MP3_YEAR/$MP3_ALBUM/
+  - pool_audios/$ST_MTIME_YEAR.noinfo/
